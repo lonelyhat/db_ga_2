@@ -1,6 +1,6 @@
 import sys
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import col
+from pyspark.sql.functions import col,udf
 from pyspark.sql.types import BooleanType
 # you may add more import if you need to
 
@@ -10,6 +10,7 @@ hdfs_nn = sys.argv[1]
 
 spark = SparkSession.builder.appName("Assigment 2 Question 1").getOrCreate()
 # YOUR CODE GOES BELOW
+@udf(returnType=BooleanType())
 def is_valid(col):
     if col:
         return bool(eval(col))
