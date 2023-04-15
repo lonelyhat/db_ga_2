@@ -21,7 +21,7 @@ df = (
 df = df.select(["ID_TA", "Reviews"])
 df_json = df.withColumn("Reviews", from_json("Reviews", json_schema))
 df_flattened = df_json.select("ID_TA", explode("Reviews").alias("Reviews"))
-df_new = df_flattened.select("ID_TA", "Review.ReviewContent as Review", "Review.Date as Date")
+df_new = df_flattened.select("ID_TA", "Reviews.ReviewContent as Review", "Reviews.Date as Date")
 df_new.show()
 df_new.write.csv(
     "hdfs://%s:9000/assignment2/output/question3/" % (hdfs_nn),
