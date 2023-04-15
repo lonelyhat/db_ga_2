@@ -29,3 +29,6 @@ df_result=df_joined.groupby(['actor1',"actor2"]).agg(count("movie_id")).where(co
 df_result.show()
 df_result_with_movie = df_result.join(df_joined,on=['actor1',"actor2"],how='inner').select('movie_id','title','actor1','actor2')
 df_result_with_movie.show()
+df_result_with_movie.write.option("header", True).mode("overwrite").parquet(
+    "hdfs://%s:9000/assignment2/output/question5/" % (hdfs_nn)
+)
