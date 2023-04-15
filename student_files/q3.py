@@ -1,7 +1,7 @@
 import sys
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import explode, split, col, arrays_zip, regexp_replace
+from pyspark.sql.functions import explode, split, col, arrays_zip, regexp_replace, trim
 
 # you may add more import if you need to
 
@@ -41,15 +41,19 @@ new_df = df.withColumn("review_date", explode(arrays_zip("review", "date")))\
 new_df.show()
 
 # 去掉单引号
-new_df = new_df.withColumn("review", regexp_replace("review", "'", ""))\
-        .withColumn("date", regexp_replace("date", "'", ""))
+new_df = new_df.withColumn("review", regexp_replace(new_df.review, "'", ""))\
+        .withColumn("date", regexp_replace(new_df.review, "'", ""))
 new_df.show()
 
 # 去掉[ 去掉]
 # 这两个\\是防止[和]被认成regex的一部分
-new_df = new_df.withColumn("review", regexp_replace("review", "\\[", ""))\
-        .withColumn("date", regexp_replace("date", "\\]", ""))
+new_df = new_df.withColumn("review", regexp_replace(new_df.review, "\\[", ""))\
+        .withColumn("date", regexp_replace(new_df.review, "\\]", ""))
 new_df.show()
+
+# trim一下，不然有的靠左有的靠右
+new_df = new_df.withColumn("review", trim(new_df.review))\
+        .withColumn("date", trim(new_df.date))
 
 new_df.write.csv(
     "hdfs://%s:9000/assignment2/output/question3/" % (hdfs_nn),
