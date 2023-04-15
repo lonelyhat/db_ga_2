@@ -27,5 +27,5 @@ df_joined = df_expanded1.join(df_expanded2, on=["movie_id"], how="inner").where(
 df_joined.show()
 df_result=df_joined.groupby(['actor1',"actor2"]).agg(count("movie_id")).where(col('count(movie_id)')>=2).select(col('actor1'),col('actor2'))
 df_result.show()
-df_result_with_movie = df_result.join(df_joined,on=['actor1',"actor2"],how='inner')
+df_result_with_movie = df_result.join(df_joined,on=['actor1',"actor2"],how='inner').select('movie_id','title','actor1','actor2')
 df_result_with_movie.show()
