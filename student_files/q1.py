@@ -14,7 +14,7 @@ spark = SparkSession.builder.appName("Assigment 2 Question 1").getOrCreate()
 def is_valid(col):
     if col:
         return bool(eval(col))
-    return False
+    return bool(col)
 # Read file
 df = (
     spark.read.option("header", True)
