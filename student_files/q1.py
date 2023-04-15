@@ -25,8 +25,8 @@ df = (
 )
 
 
-df_filtered = df.filter((col("Rating") >= 1.0) & (
-    col("Rating").isNotNull()) & (is_valid(col("Reviews"))))
+df_filtered = df.filter(!((col("Rating") >= 1.0) & (
+    col("Rating").isNotNull()) & (is_valid(col("Reviews")))))
 
 df_filtered.show()
 
