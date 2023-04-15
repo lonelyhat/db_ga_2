@@ -1,6 +1,6 @@
 import sys
 from pyspark.sql import SparkSession
-from pyspark.sql import col,max,min
+from pyspark.sql.functions import col,max,min
 from pandas import DataFrame
 # you may add more import if you need to
 
