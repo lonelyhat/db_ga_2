@@ -22,7 +22,7 @@ df = df.withColumn("Cuisine Style", col("Cuisine Style").strip(']['))
 df = df.withColumn("Cuisine Style", col("Cuisine Style").split(", "))
 df = df.withColumn("Cuisine Style", col("Cuisine Style").strip('\''))
 result = df.select("City","Cuisine Style")
-result = result.groupBy("City", "Cuisine Style").agg(count("*").alias("count")).sort(col("City").asc(), col("count").desc())
+result = result.groupBy("City", "Cuisine Style").agg(count("*").alias("Count")).sort(col("City").asc(), col("Cuisine").desc(),col("Count").desc())
 
 
 result.show()
