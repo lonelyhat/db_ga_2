@@ -23,7 +23,7 @@ df_expanded = df.withColumn("actor_indv",explode(from_json(col("cast"), json_sch
 df_expanded1=df_expanded.alias("df_expanded1")
 df_expanded2=df_expanded.alias("df_expanded2")
 df_joined = df_expanded1.join(df_expanded2, on=["movie_id"], how="inner").where(col(
-    "df_expanded1.actor_indv") < col("df_expanded2.actor_indv")).select(col('movie_id'),col("df_expanded1.actor_indv").alias("actor1"), col("df_expanded2.actor_indv").alias("actor2"))
+    "df_expanded1.actor_indv") < col("df_expanded2.actor_indv")).select(col('movie_id'),col('title'),col("df_expanded1.actor_indv").alias("actor1"), col("df_expanded2.actor_indv").alias("actor2"))
 df_joined.show()
 df_result=df_joined.groupby(['actor1',"actor2"]).agg(count("movie_id")).where(col('count(movie_id)')>=2)
 df_result.show()
