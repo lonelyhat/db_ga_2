@@ -22,6 +22,7 @@ df_bad = df.groupby(["Price Range", "City"]).agg(
     min("Rating")).withColumn("Rating",col("min(Rating)")).drop("min(Rating)")
 df_both = df_good.union(df_bad)
 df_result = df_both.join(df,on=["Price Range","City","Rating"],how="inner")
+df_result=(df_result.sort(col("City").asc(),col("Price Range").asc(),col("Rating").desc()))
 df_result.show()
 df_result.write.csv(
     "hdfs://%s:9000/assignment2/output/question1/" % (hdfs_nn), header=True)
