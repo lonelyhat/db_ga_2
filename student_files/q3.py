@@ -24,13 +24,11 @@ df = df.select("ID_TA", "Reviews")
 # 这两个\\是防止[和]被认成regex的一部分
 df = df.withColumn("review", split(df["Reviews"], "\\], \\[").getItem(0))\
         .withColumn("date", split(df["Reviews"], "\\], \\[").getItem(1))
-df.show()
 
 # 通过', '这个东西来分两条评论
 # [['a, b', 'c' 变成 [[['a, b, c']，里面第一条是[['a, b第二条是c'
 df = df.withColumn("review", split(col("review"), "', '"))\
         .withColumn("date", split(col("date"), "', '"))
-df.show()
 
 # 把同一ID 的不同评论分开
 new_df = df.withColumn("review_date", explode(arrays_zip("review", "date")))\
@@ -38,22 +36,20 @@ new_df = df.withColumn("review_date", explode(arrays_zip("review", "date")))\
                 col("review_date.review").alias("review"),
                 col("review_date.date").alias("date")
                 )
-new_df.show()
 
 # 去掉单引号
 new_df = new_df.withColumn("review", regexp_replace(new_df.review, "'", ""))\
         .withColumn("date", regexp_replace(new_df.date, "'", ""))
-new_df.show()
 
 # 去掉[ 去掉]
 # 这两个\\是防止[和]被认成regex的一部分
 new_df = new_df.withColumn("review", regexp_replace(new_df.review, "\\[", ""))\
         .withColumn("date", regexp_replace(new_df.date, "\\]", ""))
-new_df.show()
 
 # trim一下，不然有的靠左有的靠右
 new_df = new_df.withColumn("review", trim(new_df.review))\
         .withColumn("date", trim(new_df.date))
+new_df.show()
 
 new_df.write.csv(
     "hdfs://%s:9000/assignment2/output/question3/" % (hdfs_nn),
