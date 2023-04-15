@@ -1,7 +1,6 @@
 import sys
 from pyspark.sql import SparkSession
 from pyspark.sql.functions import col,max,min
-from pandas import DataFrame
 # you may add more import if you need to
 
 
@@ -10,7 +9,7 @@ hdfs_nn = sys.argv[1]
 
 spark = SparkSession.builder.appName("Assigment 2 Question 2").getOrCreate()
 # YOUR CODE GOES BELOW
-df:DataFrame = (
+df = (
     spark.read.option("header", True)
     .option("inferSchema", True)
     .option("delimiter", ",")
