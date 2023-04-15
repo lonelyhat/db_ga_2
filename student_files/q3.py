@@ -1,8 +1,7 @@
 import sys
 
 from pyspark.sql import SparkSession
-from pyspark.sql.functions import udf
-from pyspark.sql.types import StringType
+from pyspark.sql.functions import explode, split, col, arrays_zip, regexp_replace
 
 # you may add more import if you need to
 
@@ -19,17 +18,37 @@ df = (
     .option("quotes", '"')
     .csv("hdfs://%s:9000/assignment2/part1/input/" % (hdfs_nn))
 )
-df = df.select(["ID_TA", "Reviews"])
+df = df.select("ID_TA", "Reviews")
 
-# Define a UDF to extract the review content from the Reviews column
-extract_review = udf(lambda x: x[0][0] if x and x[0] else None, StringType())
+# 新加两个review, date，用], [这个形式分开
+# 这两个\\是防止[和]被认成regex的一部分
+df = df.withColumn("review", split(df["Reviews"], "\\], \\[").getItem(0))\
+        .withColumn("date", split(df["Reviews"], "\\], \\[").getItem(1))
+df.show()
 
-# Define a UDF to extract the review date from the Reviews column
-extract_date = udf(lambda x: x[1][0] if x and x[1] else None, StringType())
+# 通过', '这个东西来分两条评论
+# [['a, b', 'c' 变成 [[['a, b, c']，里面第一条是[['a, b第二条是c'
+df = df.withColumn("review", split(col("review"), "', '"))\
+        .withColumn("date", split(col("date"), "', '"))
+df.show()
 
-# Apply the UDFs to create new columns for Review and Date
-new_df = df.select("ID_TA", extract_review("Reviews").alias("Review"), extract_date("Reviews").alias("Date"))
+# 把同一ID 的不同评论分开
+new_df = df.withColumn("review_date", explode(arrays_zip("review", "date")))\
+        .select("ID_TA",
+                col("review_date.review").alias("review"),
+                col("review_date.date").alias("date")
+                )
+new_df.show()
 
+# 去掉单引号
+new_df = new_df.withColumn("review", regexp_replace("review", "'", ""))\
+        .withColumn("date", regexp_replace("date", "'", ""))
+new_df.show()
+
+# 去掉[ 去掉]
+# 这两个\\是防止[和]被认成regex的一部分
+new_df = new_df.withColumn("review", regexp_replace("review", "\\[", ""))\
+        .withColumn("date", regexp_replace("date", "\\]", ""))
 new_df.show()
 
 new_df.write.csv(
