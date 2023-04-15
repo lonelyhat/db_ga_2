@@ -23,7 +23,7 @@ df = df.withColumn("Cuisine Style", col("Cuisine Style").split(", "))
 df = df.withColumn("Cuisine Style", col("Cuisine Style").strip('\''))
 result = df.select("City","Cuisine Style")
 result = result.groupBy("City", "Cuisine Style").agg(count("*").alias("Count")).sort(col("City").asc(), col("Cuisine").desc(),col("Count").desc())
-
+result = result.select(col("City").alias("City"),col("Cuisine Style").alias("Cuisine"),col("Count").alias("Count"),)
 
 result.show()
 
