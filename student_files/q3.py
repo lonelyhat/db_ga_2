@@ -42,13 +42,13 @@ new_df.show()
 
 # 去掉单引号
 new_df = new_df.withColumn("review", regexp_replace(new_df.review, "'", ""))\
-        .withColumn("date", regexp_replace(new_df.review, "'", ""))
+        .withColumn("date", regexp_replace(new_df.date, "'", ""))
 new_df.show()
 
 # 去掉[ 去掉]
 # 这两个\\是防止[和]被认成regex的一部分
 new_df = new_df.withColumn("review", regexp_replace(new_df.review, "\\[", ""))\
-        .withColumn("date", regexp_replace(new_df.review, "\\]", ""))
+        .withColumn("date", regexp_replace(new_df.date, "\\]", ""))
 new_df.show()
 
 # trim一下，不然有的靠左有的靠右
