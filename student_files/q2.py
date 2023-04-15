@@ -17,11 +17,11 @@ df = (
     .csv("hdfs://%s:9000/assignment2/part1/input/" % (hdfs_nn))
 )
 
-df_good = df.groupby(["Price Range","City"]).agg(max("Rating"))
+df_good = df.groupby(["Price Range","City"]).agg(max("Rating")).withColumn("Rating",col("max(Rating)"))
 df_bad = df.groupby(["Price Range", "City"]).agg(
-    min("Rating"))
+    min("Rating")).withColumn("Rating",col("min(Rating)"))
 df_both = df_good.union(df_bad)
-df_result = df_both.join(df,on=["Price Range","City","Rating"],how="inner")
+df_result = df_both.join(df,on=["Price Range","City","max(Rating"],how="inner")
 df_result.show()
 df_result.write.csv(
     "hdfs://%s:9000/assignment2/output/question1/" % (hdfs_nn), header=True)
